@@ -13,6 +13,13 @@ export const typeDefs = gql`
     firstName: String!
     lastLame: String!
     email: String!
+    bets: [Bet!]!
+  }
+  type Bet {
+    id: ID!
+    creator: User!
+    createdAt: String!
+    updatedAt: String!
   }
   input CreateUserInput {
     firstName: String!

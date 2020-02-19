@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn
+} from 'typeorm';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -11,9 +18,19 @@ export class User extends BaseEntity {
   @Column('text')
   lastName: string;
 
-  @Column('text')
+  @Column('text', { unique: true })
   email: string;
 
   @Column('text')
   password: string;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
+  public createdAt: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp with time zone',
+    nullable: true
+  })
+  public updatedAt: Date;
 }
