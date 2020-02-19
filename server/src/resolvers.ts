@@ -12,7 +12,7 @@ export const resolvers: IResolvers = {
       const emailTaken = await User.findOne({ where: { email: data.email } });
 
       if (emailTaken) {
-        throw new Error('Email taken');
+        throw new Error('E-mail address already in use');
       }
 
       const hashedPassword = await bcrypt.hash(data.password, 12);

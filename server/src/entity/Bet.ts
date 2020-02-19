@@ -5,27 +5,21 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany
+  ManyToOne
 } from 'typeorm';
 
-import { Bet } from './Bet';
+import { User } from './User';
 
-@Entity('users')
-export class User extends BaseEntity {
+@Entity('bets')
+export class Bet extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column('text')
-  firstName: string;
+  goal: string;
 
   @Column('text')
-  lastName: string;
-
-  @Column('text', { unique: true })
-  email: string;
-
-  @Column('text')
-  password: string;
+  description: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   public createdAt: Date;
@@ -37,10 +31,18 @@ export class User extends BaseEntity {
   })
   public updatedAt: Date;
 
-  @OneToMany(
-    // type => Bet,
-    () => Bet,
-    bet => bet.user
+  @Column({ name: 'end_date', type: 'timestamp with time zone' })
+  public endDate: Date;
+
+  @Column('boolean')
+  public isPublished: boolean;
+
+  @Column('boolean')
+  public won: boolean;
+
+  @ManyToOne(
+    () => User,
+    user => user.bets
   )
-  bets: Bet[];
+  user: User;
 }
