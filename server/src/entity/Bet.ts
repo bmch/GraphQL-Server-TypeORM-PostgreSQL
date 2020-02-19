@@ -37,7 +37,9 @@ export class Bet extends BaseEntity {
   @Column('boolean')
   public isPublished: boolean;
 
-  @Column('boolean')
+  @Column('boolean', {
+    nullable: true
+  })
   public won: boolean;
 
   @ManyToOne(

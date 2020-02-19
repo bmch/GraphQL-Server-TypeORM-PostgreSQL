@@ -2,6 +2,7 @@ import { IResolvers } from 'graphql-tools';
 import * as bcrypt from 'bcryptjs';
 
 import { User } from './entity/User';
+import { Bet } from './entity/Bet';
 
 export const resolvers: IResolvers = {
   Query: {
@@ -40,6 +41,22 @@ export const resolvers: IResolvers = {
       }
       req.session.userId = user.id;
       return user;
+    },
+    createBet: async (_, args, { req }) => {
+      if (!req.session.userId) {
+        throw new Error('session userid not found');
+      }
+      const user = await User.findOne(req.session.userId);
+      if (!user) {
+        throw new Error('no user exists with that bet creator id');
+      }
+
+      const bet = await Bet.create({
+        user: user.id,
+        ...args.data
+      }).save();
+
+      return bet;
     }
   }
 };

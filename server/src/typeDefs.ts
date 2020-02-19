@@ -7,6 +7,7 @@ export const typeDefs = gql`
   type Mutation {
     register(data: CreateUserInput): User!
     login(email: String!, password: String!): User!
+    createBet(data: CreateBetInput): Bet!
   }
   type User {
     id: ID!
@@ -17,14 +18,25 @@ export const typeDefs = gql`
   }
   type Bet {
     id: ID!
-    creator: User!
+    goal: String!
+    description: String!
     createdAt: String!
-    updatedAt: String!
+    updatedAt: String
+    endDate: String!
+    idPublished: Boolean!
+    won: Boolean
+    creator: User!
   }
   input CreateUserInput {
     firstName: String!
     lastName: String!
     email: String!
     password: String!
+  }
+  input CreateBetInput {
+    goal: String!
+    description: String!
+    endDate: String!
+    isPublished: Boolean!
   }
 `;
