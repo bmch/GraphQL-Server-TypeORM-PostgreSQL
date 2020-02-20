@@ -43,7 +43,7 @@ export class Bet extends BaseEntity {
   public won: boolean;
 
   @ManyToOne(
-    () => User,
+    type => User,
     user => user.bets
   )
   user: User;

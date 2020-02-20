@@ -94,8 +94,11 @@ export const resolvers: IResolvers = {
   },
   Bet: {
     creator: async parent => {
-      console.log(parent, 'parent user id ');
-      return await User.find(parent.user);
+      const betUserAttached = await Bet.find({
+        where: { id: parent.id },
+        relations: ['user']
+      });
+      return betUserAttached[0].user;
     }
   }
 };

@@ -38,7 +38,7 @@ export class User extends BaseEntity {
   public updatedAt: Date;
 
   @OneToMany(
-    () => Bet,
+    type => Bet,
     bet => bet.user
   )
   bets: Bet[];
