@@ -38,7 +38,6 @@ export class User extends BaseEntity {
   public updatedAt: Date;
 
   @OneToMany(
-    // type => Bet,
     () => Bet,
     bet => bet.user
   )

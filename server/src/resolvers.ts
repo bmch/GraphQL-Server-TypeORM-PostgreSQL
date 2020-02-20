@@ -6,7 +6,31 @@ import { Bet } from './entity/Bet';
 
 export const resolvers: IResolvers = {
   Query: {
-    hello: () => `hello`
+    users: async (_, { query }) => {
+      if (!query) {
+        //return  all users
+        return await User.find();
+      }
+
+      return await User.find({
+        where: [
+          { firstName: query.toLowerCase() },
+          { lastName: query.toLowerCase() }
+        ]
+      });
+    },
+    bets: async (_, { query }) => {
+      if (!query) {
+        return await Bet.find();
+      }
+
+      return await Bet.find({
+        where: [
+          { goal: query.toLowerCase() },
+          { description: query.toLowerCase() }
+        ]
+      });
+    }
   },
   Mutation: {
     register: async (_, { data }) => {
@@ -24,7 +48,8 @@ export const resolvers: IResolvers = {
         firstName: data.firstName,
         lastName: data.lastName
       }).save();
-
+      console.log('saved user', user);
+      // we don't want to return meta data and password?
       return user;
     },
     login: async (_, { email, password }, { req }) => {
@@ -42,21 +67,35 @@ export const resolvers: IResolvers = {
       req.session.userId = user.id;
       return user;
     },
-    createBet: async (_, args, { req }) => {
+    createBet: async (_, { data }, { req }) => {
       if (!req.session.userId) {
         throw new Error('session userid not found');
       }
       const user = await User.findOne(req.session.userId);
       if (!user) {
-        throw new Error('no user exists with that bet creator id');
+        throw new Error('no user exists with session id');
       }
 
-      const bet = await Bet.create({
-        user: user.id,
-        ...args.data
+      const bet = Bet.create({
+        goal: data.goal,
+        description: data.description,
+        endDate: data.endDate,
+        isPublished: data.isPublished,
+        user: user
       }).save();
 
       return bet;
+    }
+  },
+  User: {
+    bets: async parent => {
+      return await Bet.find({ where: { user: parent.id } });
+    }
+  },
+  Bet: {
+    creator: async parent => {
+      console.log(parent, 'parent user id ');
+      return await User.find(parent.user);
     }
   }
 };

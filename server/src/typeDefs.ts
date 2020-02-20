@@ -3,6 +3,8 @@ import { gql } from 'apollo-server-express';
 export const typeDefs = gql`
   type Query {
     hello: String!
+    users(query: String): [User!]!
+    bets(query: String): [Bet!]!
   }
   type Mutation {
     register(data: CreateUserInput): User!
@@ -12,7 +14,7 @@ export const typeDefs = gql`
   type User {
     id: ID!
     firstName: String!
-    lastLame: String!
+    lastName: String!
     email: String!
     bets: [Bet!]!
   }
@@ -23,7 +25,7 @@ export const typeDefs = gql`
     createdAt: String!
     updatedAt: String
     endDate: String!
-    idPublished: Boolean!
+    isPublished: Boolean!
     won: Boolean
     creator: User!
   }
