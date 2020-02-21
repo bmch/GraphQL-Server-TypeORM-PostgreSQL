@@ -5,7 +5,8 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne
+  ManyToOne,
+  JoinColumn
 } from 'typeorm';
 
 import { User } from './User';
@@ -42,9 +43,12 @@ export class Bet extends BaseEntity {
   })
   public won: boolean;
 
+  @Column()
+  ownerId: number;
   @ManyToOne(
-    type => User,
+    () => User,
     user => user.bets
   )
-  user: User;
+  @JoinColumn({ name: 'ownerId' })
+  owner: User;
 }

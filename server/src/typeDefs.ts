@@ -27,7 +27,7 @@ export const typeDefs = gql`
     endDate: String!
     isPublished: Boolean!
     won: Boolean
-    creator: User!
+    owner: User!
   }
   input CreateUserInput {
     firstName: String!

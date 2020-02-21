@@ -5,6 +5,9 @@ import { User } from './entity/User';
 import { Bet } from './entity/Bet';
 
 export const resolvers: IResolvers = {
+  // check if postgres models being returned need to be
+  // amended and trimed (e.g. remove password and meta data ) before being sent
+
   Query: {
     users: async (_, { query }) => {
       if (!query) {
@@ -81,7 +84,7 @@ export const resolvers: IResolvers = {
         description: data.description,
         endDate: data.endDate,
         isPublished: data.isPublished,
-        user: user
+        ownerId: user.id
       }).save();
 
       return bet;
@@ -89,16 +92,13 @@ export const resolvers: IResolvers = {
   },
   User: {
     bets: async parent => {
-      return await Bet.find({ where: { user: parent.id } });
+      return await Bet.find({ ownerId: parent.id });
     }
   },
   Bet: {
-    creator: async parent => {
-      const betUserAttached = await Bet.find({
-        where: { id: parent.id },
-        relations: ['user']
-      });
-      return betUserAttached[0].user;
+    owner: async parent => {
+      const foundUser = await User.findOne(parent.ownerId);
+      return foundUser;
     }
   }
 };
