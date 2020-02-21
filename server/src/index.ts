@@ -1,10 +1,11 @@
 import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
 import * as express from 'express';
-import * as session from 'express-session';
+// import * as session from 'express-session';
 
 import { resolvers } from './resolvers';
 import { typeDefs } from './typeDefs';
+import { authenticateUser } from './middleware/authentication';
 
 const startServer = async () => {
   const server = new ApolloServer({
@@ -16,13 +17,7 @@ const startServer = async () => {
   await createConnection();
   const app = express();
 
-  app.use(
-    session({
-      secret: 'secret-secret-secret',
-      resave: false,
-      saveUninitialized: false
-    })
-  );
+  app.use(authenticateUser);
 
   server.applyMiddleware({
     app,
@@ -30,7 +25,7 @@ const startServer = async () => {
       credentials: true,
       origin: 'http://localhost:3000'
     }
-  }); // app is from an existing express app
+  });
 
   app.listen({ port: 4000 }, () =>
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)

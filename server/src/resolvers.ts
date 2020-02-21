@@ -3,6 +3,7 @@ import * as bcrypt from 'bcryptjs';
 
 import { User } from './entity/User';
 import { Bet } from './entity/Bet';
+import { signToken } from './utils/authToken';
 
 export const resolvers: IResolvers = {
   // check if postgres models being returned need to be
@@ -51,32 +52,38 @@ export const resolvers: IResolvers = {
         firstName: data.firstName,
         lastName: data.lastName
       }).save();
-      console.log('saved user', user);
+
       // we don't want to return meta data and password?
       return user;
     },
     login: async (_, { email, password }, { req }) => {
       const user = await User.findOne({ where: { email } });
-
       if (!user) {
         throw new Error('Could not find your account');
       }
-      const comparison = await bcrypt.compare(password, user.password);
-      if (!comparison) {
+
+      const isEqual = await bcrypt.compare(password, user.password);
+      if (!isEqual) {
         throw new Error(
           'Wrong password. Try again or click Forgot password to reset it'
         );
       }
-      req.session.userId = user.id;
-      return user;
+
+      const token = signToken({ userId: user.id, email: user.email });
+      return {
+        userId: user.id,
+        token: token,
+        tokenExpiration: 1
+      };
     },
     createBet: async (_, { data }, { req }) => {
-      if (!req.session.userId) {
-        throw new Error('session userid not found');
+      if (!req.currentUser) {
+        throw new Error('userid in auth token not found');
       }
-      const user = await User.findOne(req.session.userId);
+
+      const user = await User.findOne(req.currentUser);
       if (!user) {
-        throw new Error('no user exists with session id');
+        throw new Error('no user exists with id found in auth payload');
       }
 
       const bet = Bet.create({

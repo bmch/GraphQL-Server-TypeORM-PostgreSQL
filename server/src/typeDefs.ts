@@ -8,8 +8,13 @@ export const typeDefs = gql`
   }
   type Mutation {
     register(data: CreateUserInput): User!
-    login(email: String!, password: String!): User!
     createBet(data: CreateBetInput): Bet!
+    login(email: String!, password: String!): AuthPayload
+  }
+  type AuthPayload {
+    userId: ID!
+    token: String!
+    tokenExpiration: Int!
   }
   type User {
     id: ID!
